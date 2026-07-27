@@ -1023,7 +1023,7 @@ function DiscordCTA() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
-                href="https://discord.gg/"
+                href="https://discord.gg/pzzan5BjSh"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-brand hover:scale-105 transition-transform shadow-xl"
@@ -1063,14 +1063,14 @@ function Contact() {
           >
             <div>
               <div className="text-xs font-semibold text-brand uppercase tracking-wider">Email</div>
-              <a href="mailto:support@assignmentgurus.com" className="mt-1 flex items-center gap-2 font-semibold text-lg hover:text-brand transition">
-                <Mail className="h-5 w-5" /> support@assignmentgurus.com
+              <a href="mailto:assignmentsolutions91@gmail.com" className="mt-1 flex items-center gap-2 font-semibold text-lg hover:text-brand transition">
+                <Mail className="h-5 w-5" /> assignmentsolutions91@gmail.com
               </a>
             </div>
             <div>
               <div className="text-xs font-semibold text-brand uppercase tracking-wider">Community</div>
               <a
-                href="https://discord.gg/"
+                href="https://discord.gg/pzzan5BjSh"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-2 inline-flex items-center gap-2 rounded-xl bg-gradient-brand px-5 py-2.5 text-sm font-semibold text-white shadow-brand"
