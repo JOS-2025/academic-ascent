@@ -1145,13 +1145,24 @@ function Footer() {
                 ["Services", "#services"],
                 ["FAQ", "#faq"],
                 ["Contact", "#contact"],
-                ["Privacy Policy", "#"],
-                ["Terms of Service", "#"],
-              ].map(([label, href]) => (
-                <a key={label} href={href} className="text-muted-foreground hover:text-foreground transition">
-                  {label}
-                </a>
-              ))}
+                ["Privacy Policy", "/privacy"],
+                ["Terms of Service", "/terms"],
+                ["Academic Integrity", "/academic-integrity"],
+              ].map(([label, href]) =>
+                href.startsWith("/") ? (
+                  <Link
+                    key={label}
+                    to={href}
+                    className="text-muted-foreground hover:text-foreground transition"
+                  >
+                    {label}
+                  </Link>
+                ) : (
+                  <a key={label} href={href} className="text-muted-foreground hover:text-foreground transition">
+                    {label}
+                  </a>
+                ),
+              )}
             </div>
           </div>
           <div>
