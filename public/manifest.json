@@ -1,0 +1,12 @@
+{
+  "name": "Assignment Gurus",
+  "short_name": "Assignment Gurus",
+  "description": "Expert Tutoring. Personalized Learning. Academic Success.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563EB",
+  "icons": [
+    { "src": "/favicon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
