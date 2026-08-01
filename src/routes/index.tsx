@@ -54,6 +54,8 @@ import {
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { trackLeadFormSubmit } from "@/lib/gtag";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -865,8 +867,10 @@ function QuoteForm() {
     setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
+      trackLeadFormSubmit({ form_location: "quote_form" });
       form.reset();
     }, 900);
+
   };
 
   return (
@@ -1092,8 +1096,10 @@ function Contact() {
             onSubmit={(e) => {
               e.preventDefault();
               toast.success("Message sent! We'll be in touch shortly.");
+              trackLeadFormSubmit({ form_location: "contact_form" });
               (e.currentTarget as HTMLFormElement).reset();
             }}
+
             className="glass rounded-2xl p-6 sm:p-8 space-y-4"
           >
             <Field label="Name">
