@@ -865,8 +865,10 @@ function QuoteForm() {
     setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
+      trackLeadFormSubmit({ form_location: "quote_form" });
       form.reset();
     }, 900);
+
   };
 
   return (
