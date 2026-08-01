@@ -1096,8 +1096,10 @@ function Contact() {
             onSubmit={(e) => {
               e.preventDefault();
               toast.success("Message sent! We'll be in touch shortly.");
+              trackLeadFormSubmit({ form_location: "contact_form" });
               (e.currentTarget as HTMLFormElement).reset();
             }}
+
             className="glass rounded-2xl p-6 sm:p-8 space-y-4"
           >
             <Field label="Name">
