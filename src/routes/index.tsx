@@ -54,6 +54,8 @@ import {
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { trackLeadFormSubmit } from "@/lib/gtag";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
