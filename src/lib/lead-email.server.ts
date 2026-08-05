@@ -62,30 +62,14 @@ function escapeHtml(value: string): string {
 
 export async function sendLeadNotification(payload: LeadEmailPayload): Promise<LeadEmailResult> {
   const { subject, html } = renderLeadEmail(payload);
-  const senderDomain = process.env["LOVABLE_EMAIL_SENDER_DOMAIN"];
+  void subject;
+  void html;
 
-  if (!senderDomain) {
-    return {
-      sent: false,
-      error:
-        "No verified sender domain is configured for this project, so notification email could not be sent.",
-    };
-  }
-
-  try {
-    const { sendTemplateEmail } = (await import("./email-templates/send-email")) as {
-      sendTemplateEmail: (
-        template: string,
-        to: string,
-        options: { templateData?: Record<string, unknown>; idempotencyKey?: string },
-      ) => Promise<{ sent: boolean; reason?: string }>;
-    };
-    const result = await sendTemplateEmail("lead-notification", RECIPIENT, {
-      templateData: { ...payload, subject, html },
-      idempotencyKey: `lead-${payload.id}`,
-    });
-    return { sent: result.sent, error: result.sent ? undefined : (result.reason ?? "unknown") };
-  } catch (error) {
-    return { sent: false, error: error instanceof Error ? error.message : String(error) };
-  }
+  // Delivery runs through Lovable's managed email service, which requires a
+  // verified sender domain for this project. Until that domain exists there is
+  // no real way to send, so we report the failure instead of faking success.
+  return {
+    sent: false,
+    error: "No verified sender domain is configured, so the notification email could not be sent.",
+  };
 }
