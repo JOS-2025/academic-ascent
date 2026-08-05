@@ -1053,6 +1053,7 @@ function DiscordCTA() {
 
 /* ---------- Contact ---------- */
 function Contact() {
+  const navigate = useNavigate();
   return (
     <section id="contact" className="relative py-24 bg-secondary/30">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
