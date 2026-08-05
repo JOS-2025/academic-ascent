@@ -55,6 +55,8 @@ import {
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { trackLeadFormSubmit } from "@/lib/gtag";
+import { submitLead } from "@/lib/leads.functions";
+import { useServerFn } from "@tanstack/react-start";
 
 
 export const Route = createFileRoute("/")({
@@ -857,23 +859,45 @@ function QuoteForm() {
   const navigate = useNavigate();
 
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const send = useServerFn(submitLead);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
-    if (!data.get("name") || !data.get("email") || !data.get("message")) {
+    const value = (key: string) => String(data.get(key) ?? "").trim();
+    if (!value("name") || !value("email") || !value("message")) {
       toast.error("Please fill in required fields.");
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true);
+    try {
+      await send({
+        data: {
+          formType: "quote",
+          name: value("name"),
+          email: value("email"),
+          phone: value("phone"),
+          country: value("country"),
+          subject: value("subject"),
+          level: value("level"),
+          deadline: value("deadline"),
+          message: value("message"),
+        },
+      });
       trackLeadFormSubmit({ form_location: "quote_form" });
+      setSubmitted(true);
       form.reset();
       navigate({ to: "/thank-you" });
-    }, 900);
-
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "We could not send your request. Please email assignmentsolutions91@gmail.com.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -943,6 +967,9 @@ function QuoteForm() {
                 </Field>
                 <Field label="Email *">
                   <Input name="email" type="email" required placeholder="jane@school.edu" />
+                </Field>
+                <Field label="Phone / WhatsApp">
+                  <Input name="phone" type="tel" placeholder="+44 7700 900123" />
                 </Field>
                 <Field label="Country">
                   <Input name="country" placeholder="United Kingdom" />
@@ -1054,6 +1081,8 @@ function DiscordCTA() {
 /* ---------- Contact ---------- */
 function Contact() {
   const navigate = useNavigate();
+  const send = useServerFn(submitLead);
+  const [sending, setSending] = useState(false);
   return (
     <section id="contact" className="relative py-24 bg-secondary/30">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -1097,12 +1126,38 @@ function Contact() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
-              toast.success("Message sent! We'll be in touch shortly.");
-              trackLeadFormSubmit({ form_location: "contact_form" });
-              (e.currentTarget as HTMLFormElement).reset();
-              navigate({ to: "/thank-you" });
+              const form = e.currentTarget as HTMLFormElement;
+              const data = new FormData(form);
+              const value = (key: string) => String(data.get(key) ?? "").trim();
+              if (!value("name") || !value("email") || !value("message")) {
+                toast.error("Please fill in required fields.");
+                return;
+              }
+              setSending(true);
+              try {
+                await send({
+                  data: {
+                    formType: "contact",
+                    name: value("name"),
+                    email: value("email"),
+                    phone: value("phone"),
+                    message: value("message"),
+                  },
+                });
+                trackLeadFormSubmit({ form_location: "contact_form" });
+                form.reset();
+                navigate({ to: "/thank-you" });
+              } catch (error) {
+                toast.error(
+                  error instanceof Error
+                    ? error.message
+                    : "We could not send your message. Please email assignmentsolutions91@gmail.com.",
+                );
+              } finally {
+                setSending(false);
+              }
             }}
 
             className="glass rounded-2xl p-6 sm:p-8 space-y-4"
@@ -1113,14 +1168,18 @@ function Contact() {
             <Field label="Email">
               <Input name="email" type="email" required placeholder="you@email.com" />
             </Field>
+            <Field label="Phone / WhatsApp">
+              <Input name="phone" type="tel" placeholder="+44 7700 900123" />
+            </Field>
             <Field label="Message">
               <Textarea name="message" required rows={4} placeholder="How can we help?" />
             </Field>
             <button
               type="submit"
-              className="w-full rounded-xl bg-gradient-brand px-5 py-3 text-sm font-semibold text-white shadow-brand hover:scale-[1.02] transition"
+              disabled={sending}
+              className="w-full rounded-xl bg-gradient-brand px-5 py-3 text-sm font-semibold text-white shadow-brand hover:scale-[1.02] transition disabled:opacity-70"
             >
-              Send Message
+              {sending ? "Sending..." : "Send Message"}
             </button>
           </motion.form>
         </div>
