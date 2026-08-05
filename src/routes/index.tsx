@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   motion,
   useScroll,
@@ -854,6 +854,8 @@ function FAQ() {
 function QuoteForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -869,6 +871,7 @@ function QuoteForm() {
       setSubmitted(true);
       trackLeadFormSubmit({ form_location: "quote_form" });
       form.reset();
+      navigate({ to: "/thank-you" });
     }, 900);
 
   };
@@ -1098,6 +1101,7 @@ function Contact() {
               toast.success("Message sent! We'll be in touch shortly.");
               trackLeadFormSubmit({ form_location: "contact_form" });
               (e.currentTarget as HTMLFormElement).reset();
+              navigate({ to: "/thank-you" });
             }}
 
             className="glass rounded-2xl p-6 sm:p-8 space-y-4"
