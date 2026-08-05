@@ -62,15 +62,29 @@ function escapeHtml(value: string): string {
 
 export async function sendLeadNotification(payload: LeadEmailPayload): Promise<LeadEmailResult> {
   const { subject, html } = renderLeadEmail(payload);
+  const senderDomain = process.env["LOVABLE_EMAIL_SENDER_DOMAIN"];
+
+  if (!senderDomain) {
+    return {
+      sent: false,
+      error:
+        "No verified sender domain is configured for this project, so notification email could not be sent.",
+    };
+  }
 
   try {
-    const mod = (await import("./lead-mailer.server")) as {
-      deliver?: (args: { to: string; subject: string; html: string }) => Promise<LeadEmailResult>;
+    const { sendTemplateEmail } = (await import("./email-templates/send-email")) as {
+      sendTemplateEmail: (
+        template: string,
+        to: string,
+        options: { templateData?: Record<string, unknown>; idempotencyKey?: string },
+      ) => Promise<{ sent: boolean; reason?: string }>;
     };
-    if (!mod.deliver) {
-      return { sent: false, error: "Email sender is not configured for this project yet." };
-    }
-    return await mod.deliver({ to: RECIPIENT, subject, html });
+    const result = await sendTemplateEmail("lead-notification", RECIPIENT, {
+      templateData: { ...payload, subject, html },
+      idempotencyKey: `lead-${payload.id}`,
+    });
+    return { sent: result.sent, error: result.sent ? undefined : (result.reason ?? "unknown") };
   } catch (error) {
     return { sent: false, error: error instanceof Error ? error.message : String(error) };
   }
