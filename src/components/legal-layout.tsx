@@ -232,7 +232,8 @@ function LegalFooter() {
                 Academic Integrity
               </Link>
               <Link
-                to="/#contact"
+                to="/"
+                hash="contact"
                 className="text-muted-foreground hover:text-foreground transition"
               >
                 Contact
