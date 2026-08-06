@@ -878,6 +878,7 @@ function QuoteForm() {
           name: value("name"),
           email: value("email"),
           phone: value("phone"),
+          whatsapp: value("whatsapp"),
           country: value("country"),
           subject: value("subject"),
           level: value("level"),
@@ -885,6 +886,7 @@ function QuoteForm() {
           message: value("message"),
         },
       });
+
       trackLeadFormSubmit({ form_location: "quote_form" });
       setSubmitted(true);
       form.reset();
@@ -968,9 +970,13 @@ function QuoteForm() {
                 <Field label="Email *">
                   <Input name="email" type="email" required placeholder="jane@school.edu" />
                 </Field>
-                <Field label="Phone / WhatsApp">
+                <Field label="Phone">
                   <Input name="phone" type="tel" placeholder="+44 7700 900123" />
                 </Field>
+                <Field label="WhatsApp">
+                  <Input name="whatsapp" type="tel" placeholder="+44 7700 900123" />
+                </Field>
+
                 <Field label="Country">
                   <Input name="country" placeholder="United Kingdom" />
                 </Field>
@@ -1143,9 +1149,11 @@ function Contact() {
                     name: value("name"),
                     email: value("email"),
                     phone: value("phone"),
+                    whatsapp: value("whatsapp"),
                     message: value("message"),
                   },
                 });
+
                 trackLeadFormSubmit({ form_location: "contact_form" });
                 form.reset();
                 navigate({ to: "/thank-you" });
@@ -1168,9 +1176,13 @@ function Contact() {
             <Field label="Email">
               <Input name="email" type="email" required placeholder="you@email.com" />
             </Field>
-            <Field label="Phone / WhatsApp">
+            <Field label="Phone">
               <Input name="phone" type="tel" placeholder="+44 7700 900123" />
             </Field>
+            <Field label="WhatsApp">
+              <Input name="whatsapp" type="tel" placeholder="+44 7700 900123" />
+            </Field>
+
             <Field label="Message">
               <Textarea name="message" required rows={4} placeholder="How can we help?" />
             </Field>
