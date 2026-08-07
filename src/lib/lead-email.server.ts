@@ -1,7 +1,4 @@
-// Server-only email delivery for lead form submissions.
-// Sending runs through Lovable's managed email service, which requires a
-// verified sender domain for this project. Until that domain is configured the
-// send fails loudly so the UI never shows a false success.
+// Server-only email delivery for lead form submissions, sent via Resend.
 
 const RECIPIENT = "assignmentsolutions91@gmail.com";
 
@@ -61,15 +58,37 @@ function escapeHtml(value: string): string {
 }
 
 export async function sendLeadNotification(payload: LeadEmailPayload): Promise<LeadEmailResult> {
-  const { subject, html } = renderLeadEmail(payload);
-  void subject;
-  void html;
+  const apiKey = process.env["RESEND_API_KEY"];
+  if (!apiKey) {
+    return { sent: false, error: "RESEND_API_KEY is not configured." };
+  }
 
-  // Delivery runs through Lovable's managed email service, which requires a
-  // verified sender domain for this project. Until that domain exists there is
-  // no real way to send, so we report the failure instead of faking success.
-  return {
-    sent: false,
-    error: "No verified sender domain is configured, so the notification email could not be sent.",
-  };
+  const from = process.env["RESEND_FROM_EMAIL"] || "Assignment Gurus <onboarding@resend.dev>";
+  const { subject, html } = renderLeadEmail(payload);
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        from,
+        to: [RECIPIENT],
+        reply_to: payload.email,
+        subject,
+        html,
+      }),
+    });
+
+    if (!response.ok) {
+      const body = await response.text();
+      return { sent: false, error: `Resend request failed [${response.status}]: ${body}` };
+    }
+
+    return { sent: true };
+  } catch (error) {
+    return { sent: false, error: String(error) };
+  }
 }
